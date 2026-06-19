@@ -9,6 +9,22 @@ st.set_page_config(
 )
 
 
+# ---------------------------------
+# FUNÇÃO PARA LIMPAR ESTADO
+# QUANDO O ARQUIVO FOR REMOVIDO
+# ---------------------------------
+
+def clear_result():
+
+    if "result" in st.session_state:
+        del st.session_state["result"]
+
+
+
+# ---------------------------------
+# INTERFACE
+# ---------------------------------
+
 st.title("🎬 A/V Text Transformer")
 
 
@@ -25,12 +41,15 @@ uploaded_file = st.file_uploader(
         "aac",
         "flac",
         "ogg"
-    ]
+    ],
+    key="uploaded_file",
+    on_change=clear_result
 )
 
 
+
 # ---------------------------------
-# PROCESSAMENTO DO ARQUIVO
+# PROCESSAMENTO
 # ---------------------------------
 
 if uploaded_file:
@@ -42,14 +61,17 @@ if uploaded_file:
 
     if st.button("🚀 Processar"):
 
-        with st.spinner("Processando..."):
+        with st.spinner(
+            "Processando..."
+        ):
+
 
             result = process_uploaded_file(
                 uploaded_file
             )
 
 
-            # Guarda o resultado na sessão
+            # Guarda resultado na sessão
             st.session_state["result"] = result
 
 
@@ -60,8 +82,8 @@ if uploaded_file:
 
 
 # ---------------------------------
-# MOSTRA DOWNLOADS E CUSTOS
-# PERSISTENTE NA SESSÃO
+# DOWNLOAD + INFORMAÇÕES
+# PERMANECEM APÓS DOWNLOAD
 # ---------------------------------
 
 if "result" in st.session_state:
@@ -99,7 +121,7 @@ if "result" in st.session_state:
 
 
     # ---------------------------------
-    # INFORMAÇÕES DE CUSTO
+    # CUSTOS
     # ---------------------------------
 
     st.subheader(
