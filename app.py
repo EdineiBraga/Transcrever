@@ -3,7 +3,7 @@ from pipeline import process_uploaded_file, get_download_folder
 
 st.set_page_config(page_title="Pipeline de Mídia com IA")
 
-st.title("🎬 Pipeline Inteligente de Áudio/Vídeo")
+st.title("🎬 A/V Text Transformer")
 
 uploaded_file = st.file_uploader(
     "Escolha um arquivo",
