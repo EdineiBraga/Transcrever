@@ -108,4 +108,134 @@ if uploaded_file:
 
             st.write(
                 f"Custo real total: ${total_cost:.4f}"
+            )import streamlit as st
+import os
+
+from pipeline import process_uploaded_file
+
+
+st.set_page_config(
+    page_title="Pipeline de Mídia com IA"
+)
+
+
+st.title("🎬 A/V Text Transformer")
+
+
+uploaded_file = st.file_uploader(
+    "Escolha um arquivo",
+    type=[
+        "mp4",
+        "mov",
+        "avi",
+        "mkv",
+        "mp3",
+        "wav",
+        "m4a",
+        "aac",
+        "flac",
+        "ogg"
+    ]
+)
+
+
+# ---------------------------------
+# PROCESSAMENTO DO ARQUIVO
+# ---------------------------------
+
+if uploaded_file:
+
+    st.success(
+        f"Arquivo: {uploaded_file.name}"
+    )
+
+
+    if st.button("🚀 Processar"):
+
+        with st.spinner("Processando..."):
+
+            result = process_uploaded_file(
+                uploaded_file
             )
+
+
+            # Guarda o resultado na sessão
+            st.session_state["result"] = result
+
+
+            st.success(
+                "✅ Concluído!"
+            )
+
+
+
+# ---------------------------------
+# MOSTRA DOWNLOADS E CUSTOS
+# PERSISTENTE NA SESSÃO
+# ---------------------------------
+
+if "result" in st.session_state:
+
+
+    result = st.session_state["result"]
+
+
+    st.subheader(
+        "📥 Download dos arquivos"
+    )
+
+
+    for path in result["paths"]:
+
+
+        with open(
+            path,
+            "rb"
+        ) as file:
+
+
+            st.download_button(
+
+                label=f"⬇️ Baixar {os.path.basename(path)}",
+
+                data=file,
+
+                file_name=os.path.basename(path),
+
+                mime="text/plain"
+
+            )
+
+
+
+    # ---------------------------------
+    # INFORMAÇÕES DE CUSTO
+    # ---------------------------------
+
+    st.subheader(
+        "💰 Estimativa vs Real"
+    )
+
+
+    st.write(
+        f"Duração: {result['duration']:.2f} segundos"
+    )
+
+
+    st.write(
+        f"Estimativa transcrição: ${result['estimated_cost']:.4f}"
+    )
+
+
+    usage = result["usage"]
+
+
+    total_cost = sum(
+        v["cost"]
+        for v in usage.values()
+    )
+
+
+    st.write(
+        f"Custo real total: ${total_cost:.4f}"
+    )
